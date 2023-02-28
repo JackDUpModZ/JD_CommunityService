@@ -70,7 +70,7 @@ startActions = function()
 				icon = 'fa-solid fa-location-crosshairs',
 				label = 'Sweep',
 				canInteract = function(entity, distance, coords, name)
-					return true
+					return not lib.progressActive()
 				end
 			}
 		}
