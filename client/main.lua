@@ -8,11 +8,7 @@ local markerData = nil
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(playerData)
 	Citizen.Wait(2000)
-
-end)
-
-CreateThread(function()
-    local count = exports["boba-callbacks"]:ExecuteServerCallback('JD_CommunityService:getCurrentActions')
+	local count = lib.callback.await('JD_CommunityService:getCurrentActions', false)
 	if count >= 1 then
 		beginService(count)
 	end
@@ -106,7 +102,7 @@ RegisterCommand('communityService', function()
 		if not input then return end
 		local targetID = tonumber(input[1])
 		local actionCount = input[2]
-		exports["boba-callbacks"]:ExecuteServerCallback("JD_CommunityService:sendToService", targetID, actionCount)
+		TriggerServerEvent('JD_CommunityService:sendToService', targetID, actionCount)
 	else
 		ESX.ShowNotification('No permissions to access this!')
 	end
@@ -150,7 +146,7 @@ updateFunction = function()
 		active = false
 		inService = false
 		releaseZone()
-		exports["boba-callbacks"]:ExecuteServerCallback('JD_CommunityService:completeService')
+		TriggerServerEvent('JD_CommunityService:completeService')
 		ESX.ShowNotification('Youve been released from community service, Best behaviour citizen!')
 	end
 end
