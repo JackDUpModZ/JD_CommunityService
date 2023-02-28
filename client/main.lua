@@ -115,20 +115,18 @@ targetInteract = function(data)
 end
 
 startSweep = function()
-	if not HasAnimDictLoaded("anim@amb@drug_field_workers@rake@male_a@base") then
-        RequestAnimDict("anim@amb@drug_field_workers@rake@male_a@base")
-    end
-    while not HasAnimDictLoaded("anim@amb@drug_field_workers@rake@male_a@base") do
-        Citizen.Wait(0)
-    end
-	TaskPlayAnim(GetPlayerPed(-1), 'anim@amb@drug_field_workers@rake@male_a@base', 'base', 2.0, 2.0, 17000, 1, 0, false, false, false)
-	local boneindex = GetPedBoneIndex(PlayerPedId(-1), 28422)
-	broom = CreateObject(GetHashKey("prop_tool_broom"), 0, 0, 0, true, true, true)
-	AttachEntityToEntity(broom, PlayerPedId(-1), boneindex, -0.010000, 0.040000, -0.030000, 0.000000, 0.000000, 0.000000, true, true, false, true, 1, true)
-
-	Wait(5000)
-    DeleteEntity(broom)
-	ClearPedTasks(GetPlayerPed(-1))
+	local progress = lib.progressCircle({
+		duration = 5000,
+		label = 'Sweeping ground',
+		useWhileDead = false,
+		allowRagdoll = false,
+		allowCuffed = false,
+		allowFalling = false,
+		canCancel = false,
+		anim = { dict = 'amb@world_human_janitor@male@idle_a', clip = 'idle_a' },
+		prop = { model = `prop_tool_broom`, bone = 28422, pos = { x = -0.005, y = 0.0, z = 0.0}, rot = { x = 360.0, y = 360.0, z = 0.0 } },
+		disable = { move = true, combat = true }
+	})
 
 	local currentNumber = existingActions
 	existingActions = currentNumber -1
