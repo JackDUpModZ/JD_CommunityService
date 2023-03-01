@@ -95,19 +95,6 @@ removeTargets = function()
 	markerData = nil
 end
 
-RegisterCommand('communityService', function()
-	if ESX.PlayerData.job.name == 'police' then
-		local input = lib.inputDialog('Community Service', {'Player ID', 'Number of actions'})
-
-		if not input then return end
-		local targetID = tonumber(input[1])
-		local actionCount = input[2]
-		TriggerServerEvent('JD_CommunityService:sendToService', targetID, actionCount)
-	else
-		ESX.ShowNotification('No permissions to access this!')
-	end
-end,false)
-
 targetInteract = function(data)
 	if data.name == 'sweep' then
 		startSweep()
