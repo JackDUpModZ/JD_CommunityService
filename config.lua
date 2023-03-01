@@ -19,6 +19,8 @@ Config.ServiceLocations = {
 	{type = 'sweep', coords = vector4(198.8164, -1015.651, 28.30341, 236.8525)}
 }
 
+Config.PoliceJob = 'police'
+
 Config.Uniforms = {
 	prison_wear = {
 		male = {
