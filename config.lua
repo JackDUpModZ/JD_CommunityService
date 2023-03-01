@@ -21,25 +21,11 @@ Config.ServiceLocations = {
 
 Config.PoliceJob = 'police'
 
-Config.Uniforms = {
-	prison_wear = {
-		male = {
-			['tshirt_1'] = 15,  ['tshirt_2'] = 0,
-			['torso_1']  = 146, ['torso_2']  = 0,
-			['decals_1'] = 0,   ['decals_2'] = 0,
-			['arms']     = 119, ['pants_1']  = 3,
-			['pants_2']  = 7,   ['shoes_1']  = 12,
-			['shoes_2']  = 12,  ['chain_1']  = 0,
-			['chain_2']  = 0
-		},
-		female = {
-			['tshirt_1'] = 3,   ['tshirt_2'] = 0,
-			['torso_1']  = 38,  ['torso_2']  = 3,
-			['decals_1'] = 0,   ['decals_2'] = 0,
-			['arms']     = 120,  ['pants_1'] = 3,
-			['pants_2']  = 15,  ['shoes_1']  = 66,
-			['shoes_2']  = 5,   ['chain_1']  = 0,
-			['chain_2']  = 0
-		}
-	}
+Config.Clothes = {
+    male = {
+        components = {{["component_id"] = 0, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 1, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 3, ["texture"] = 0, ["drawable"] = 63},{["component_id"] = 4, ["texture"] = 0, ["drawable"] = 163},{["component_id"] = 5, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 6, ["texture"] = 0, ["drawable"] = 60},{["component_id"] = 7, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 8, ["texture"] = 0, ["drawable"] = 15},{["component_id"] = 9, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 10, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 11, ["texture"] = 0, ["drawable"] = 56},},
+    },
+    female = {
+        components = {{["component_id"] = 0, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 1, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 3, ["texture"] = 0, ["drawable"] = 76},{["component_id"] = 4, ["texture"] = 0, ["drawable"] = 35},{["component_id"] = 5, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 6, ["texture"] = 0, ["drawable"] = 49},{["component_id"] = 7, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 8, ["texture"] = 0, ["drawable"] = 14},{["component_id"] = 9, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 10, ["texture"] = 0, ["drawable"] = 0},{["component_id"] = 11, ["texture"] = 0, ["drawable"] = 118},},
+    }
 }
