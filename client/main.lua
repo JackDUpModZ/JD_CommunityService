@@ -53,6 +53,7 @@ beginService = function(actionCount)
 	inService = true
 	tpToZone()
 	startActions()
+	changeClothing()
 end
 
 startActions = function()
@@ -83,6 +84,7 @@ tpToZone = function()
 end
 
 releaseZone = function()
+	returnClothing()
 	SetEntityCoords(PlayerPedId(), Config.ReleaseLocation.xyz)
 end
 
@@ -134,6 +136,28 @@ updateFunction = function()
 		TriggerServerEvent('JD_CommunityService:completeService')
 		ESX.ShowNotification('Youve been released from community service, Best behaviour citizen!')
 	end
+end
+
+changeClothing = function()
+	TriggerEvent('skinchanger:getSkin', function(skin)
+		gender = skin.model
+	end)
+	local PlayerPed = PlayerPedId()
+	if gender == 'mp_m_freemode_01' then
+		for k,v in pairs(Config.Clothes.male.components) do
+			SetPedComponentVariation(PlayerPed, v["component_id"], v["drawable"], v["texture"], 0)
+		end
+	else
+		for k,v in pairs(Config.Clothes.female.components) do
+			SetPedComponentVariation(PlayerPed, v["component_id"], v["drawable"], v["texture"], 0)
+		end
+	end
+end
+
+returnClothing = function()
+	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
+		TriggerEvent('skinchanger:loadSkin', skin)
+	end)
 end
 
 lib.callback.register('JD_CommunityService:inputCallback', function()
