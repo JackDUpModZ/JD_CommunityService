@@ -9,7 +9,8 @@ RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(playerData)
 	Citizen.Wait(2000)
 	local count = lib.callback.await('JD_CommunityService:getCurrentActions', false)
-	if count >= 1 then
+	if count == nil then
+	elseif count >= 1 then
 		beginService(count)
 	end
 end)
