@@ -135,3 +135,9 @@ updateFunction = function()
 		ESX.ShowNotification('Youve been released from community service, Best behaviour citizen!')
 	end
 end
+
+lib.callback.register('JD_CommunityService:inputCallback', function()
+	local input = lib.inputDialog('Community Service', {'Player ID', 'Number of actions'})
+	if not input then return end
+    return input
+end)
