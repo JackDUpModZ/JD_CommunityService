@@ -57,9 +57,7 @@ RegisterCommand('communityService', function(source, args, rawCommand)
 	local xPlayer = ESX.GetPlayerFromId(_source)
 
 	if xPlayer.job.name == Config.PoliceJob then
-		local input = lib.inputDialog('Community Service', {'Player ID', 'Number of actions'})
-
-		if not input then return end
+		local input = lib.callback.await('JD_CommunityService:inputCallback', source)
 		local targetID = tonumber(input[1])
 		local actionCount = input[2]
 		sendToService(targetID, actionCount)
@@ -74,9 +72,7 @@ AddEventHandler('JD_CommunityService:communityMenu', function()
 	local xPlayer = ESX.GetPlayerFromId(_source)
 
 	if xPlayer.job.name == Config.PoliceJob then
-		local input = lib.inputDialog('Community Service', {'Player ID', 'Number of actions'})
-
-		if not input then return end
+		local input = lib.callback.await('JD_CommunityService:inputCallback', source)
 		local targetID = tonumber(input[1])
 		local actionCount = input[2]
 		sendToService(targetID, actionCount)
