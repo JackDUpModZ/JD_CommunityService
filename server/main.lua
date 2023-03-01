@@ -16,14 +16,14 @@ sendToService = function(target, actions)
 			senderPlayer.showNotification('Player sent to community service!')
 			targetPlayer.showNotification('Youve been sent to community service for '..actions..' actions!')
 			TriggerClientEvent('JD_CommunityService:beginService',target,actions)
-			TriggerEvent('JD_CommunityService:updateService',target,actions)
+			updateService(target,actions)
 		end
 	else
 		senderPlayer.showNotification('Invalid ID / No one sent!')
 	end
 end
 
-RegisterNetEvent("JD_CommunityService:updateService", function(target, actions)
+updateService= function(target, actions)
 	local _source = target -- cannot parse source to client trigger for some weird reason
 	local xPlayer = ESX.GetPlayerFromId(_source)
 	local identifier = xPlayer.identifier
@@ -34,7 +34,7 @@ RegisterNetEvent("JD_CommunityService:updateService", function(target, actions)
 	else
 		local insert = MySQL.insert.await('INSERT INTO communityservice (identifier, actions_remaining) VALUES (?, ?)', {identifier, actions})
 	end
-end)
+end
 
 RegisterServerEvent('JD_CommunityService:completeService')
 AddEventHandler('JD_CommunityService:completeService', function()
