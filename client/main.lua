@@ -134,7 +134,7 @@ updateFunction = function()
 		active = false
 		inService = false
 		releaseZone()
-		TriggerServerEvent('JD_CommunityService:completeService')
+		lib.callback('JD_CommunityService:completeService')
 		ESX.ShowNotification('Youve been released from community service, Best behaviour citizen!')
 	end
 end
