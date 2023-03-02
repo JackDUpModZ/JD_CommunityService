@@ -10,32 +10,20 @@ RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(playerData)
 	Citizen.Wait(2000)
 	local count = lib.callback.await('JD_CommunityService:getCurrentActions', false)
-	if count == nil then
-	elseif count >= 1 then
+	if count ~= nil then
 		beginService(count)
 	end
 end)
 
-Citizen.CreateThread(function()
-  	while true do
-		Citizen.Wait(1)
-		if drawMarker then 
-			DrawMarker(20, markerData.x, markerData.y, markerData.z + 1.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.4, 0.4, 0.4, 235, 64, 52, 100, true, false, 2, true, false, false, false)
-		else 
-			Wait(500)
-		end
-	end
-end)
-
-function onExit(self)
+local function onExit(self)
     if inService then
 		if Config.ServiceExtensionOnEscape >= 1 then
 			local currentNumber = existingActions
 			local extensionCount = Config.ServiceExtensionOnEscape
 			existingActions = currentNumber + extensionCount
-			ESX.ShowNotification('Youre time has been extended by '..extensionCount..' actions!')
+			ESX.ShowNotification('Youre time has been extended by '.. extensionCount ..' actions!')
 		end
-		tpToZone()
+		teleportToZone()
 	end
 end
 
@@ -56,15 +44,15 @@ AddEventHandler('JD_CommunityService:beginService', function(count)
 	beginService(count)
 end)
 
-beginService = function(actionCount)
+local function beginService (actionCount)
 	existingActions = actionCount
 	inService = true
-	tpToZone()
+	teleportToZone()
 	startActions()
 	changeClothing()
 end
 
-startActions = function()
+local function startActions()
 	local indexNumber = math.random(1,#Config.ServiceLocations)
 
 	drawMarker = true
@@ -100,16 +88,30 @@ startActions = function()
 	table.insert(targetList, target)
 end
 
-tpToZone = function()
-	SetEntityCoords(PlayerPedId(), Config.StartLocation.xyz)
+local function changeClothing()
+	local gender = nil
+	
+	TriggerEvent('skinchanger:getSkin', function(skin)
+		gender = skin.model
+	end)
+
+	local outfitComponents = Config.Clothes.male.components
+	if gender ~= 'mp_m_freemode_01' then
+		outfitComponents = Config.Clothes.female.components
+	end
+
+	for k,v in pairs(outfitComponents) do
+		SetPedComponentVariation(PlayerPedId(), v["component_id"], v["drawable"], v["texture"], 0)
+	end
 end
 
-releaseZone = function()
-	returnClothing()
-	SetEntityCoords(PlayerPedId(), Config.ReleaseLocation.xyz)
+local function returnClothing()
+	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
+		TriggerEvent('skinchanger:loadSkin', skin)
+	end)
 end
 
-removeTargets = function()
+local function removeTargets()
 	for k,v in pairs(targetList) do 
 		exports.ox_target:removeZone(v)
 		targetList[k] = nil
@@ -118,13 +120,13 @@ removeTargets = function()
 	markerData = nil
 end
 
-targetInteract = function(data)
+local function targetInteract(data)
 	if data.name == 'sweep' then
 		startSweep()
 	end
 end
 
-startSweep = function()
+local function startSweep()
 	local progress = lib.progressCircle({
 		duration = 5000,
 		label = 'Sweeping ground',
@@ -138,15 +140,15 @@ startSweep = function()
 		disable = { move = true, combat = true }
 	})
 
-	local currentNumber = existingActions
-	existingActions = currentNumber -1
+	existingActions = existingActions - 1
 	if existingActions >= 1 then
-		ESX.ShowNotification('Actions remaining'..' '..existingActions..'!')
+		ESX.ShowNotification('Actions remaining'..' '.. existingActions ..'!')
 	end
+
 	updateFunction()
 end
 
-updateFunction = function()
+local function updateFunction()
 	removeTargets()
 	DeleteObject(obj)
 	obj = nil
@@ -155,36 +157,34 @@ updateFunction = function()
 	else
 		active = false
 		inService = false
-		releaseZone()
+		releaseFromZone()
 		lib.callback('JD_CommunityService:completeService')
 		ESX.ShowNotification('Youve been released from community service, Best behaviour citizen!')
 	end
 end
 
-changeClothing = function()
-	TriggerEvent('skinchanger:getSkin', function(skin)
-		gender = skin.model
-	end)
-	local PlayerPed = PlayerPedId()
-	if gender == 'mp_m_freemode_01' then
-		for k,v in pairs(Config.Clothes.male.components) do
-			SetPedComponentVariation(PlayerPed, v["component_id"], v["drawable"], v["texture"], 0)
-		end
-	else
-		for k,v in pairs(Config.Clothes.female.components) do
-			SetPedComponentVariation(PlayerPed, v["component_id"], v["drawable"], v["texture"], 0)
-		end
-	end
+local function teleportToZone()
+	SetEntityCoords(PlayerPedId(), Config.StartLocation.xyz)
 end
 
-returnClothing = function()
-	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
-		TriggerEvent('skinchanger:loadSkin', skin)
-	end)
+local function releaseFromZone()
+	returnClothing()
+	SetEntityCoords(PlayerPedId(), Config.ReleaseLocation.xyz)
 end
 
 lib.callback.register('JD_CommunityService:inputCallback', function()
 	local input = lib.inputDialog('Community Service', {'Player ID', 'Number of actions'})
 	if not input then return end
     return input
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(1)
+		if drawMarker then 
+			DrawMarker(20, markerData.x, markerData.y, markerData.z + 1.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.4, 0.4, 0.4, 235, 64, 52, 100, true, false, 2, true, false, false, false)
+		else 
+			Wait(500)
+		end
+  end
 end)
