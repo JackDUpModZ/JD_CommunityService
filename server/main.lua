@@ -58,9 +58,12 @@ RegisterCommand('communityService', function(source, args, rawCommand)
 
 	if xPlayer.job.name == Config.PoliceJob then
 		local input = lib.callback.await('JD_CommunityService:inputCallback', source)
+		if input == nil then
+		else
 		local targetID = tonumber(input[1])
 		local actionCount = input[2]
 		sendToService(targetID, actionCount)
+		end
 	else
 		xPlayer.showNotification('No permissions to access this!')
 	end
@@ -72,9 +75,12 @@ lib.callback.register('JD_CommunityService:communityMenu', function()
 
 	if xPlayer.job.name == Config.PoliceJob then
 		local input = lib.callback.await('JD_CommunityService:inputCallback', source)
+		if input == nil then
+		else
 		local targetID = tonumber(input[1])
 		local actionCount = input[2]
 		sendToService(targetID, actionCount)
+		end
 	else
 		xPlayer.showNotification('No permissions to access this!')
 	end
