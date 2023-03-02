@@ -4,6 +4,7 @@ local existingActions
 local targetList = {}
 local drawMarker = false
 local markerData = nil
+local obj
 
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(playerData)
@@ -28,6 +29,12 @@ end)
 
 function onExit(self)
     if inService then
+		if Config.ServiceExtensionOnEscape >= 1 then
+			local currentNumber = existingActions
+			local extensionCount = Config.ServiceExtensionOnEscape
+			existingActions = currentNumber + extensionCount
+			ESX.ShowNotification('Youre time has been extended by '..extensionCount..' actions!')
+		end
 		tpToZone()
 	end
 end
@@ -77,6 +84,19 @@ startActions = function()
 			}
 		}
 	})
+	local modelHash = `v_ind_rc_rubbishppr` -- The ` return the jenkins hash of a string. see more at: https://cookbook.fivem.net/2019/06/23/lua-support-for-compile-time-jenkins-hashes/
+
+	if not HasModelLoaded(modelHash) then
+		-- If the model isnt loaded we request the loading of the model and wait that the model is loaded
+		RequestModel(modelHash)
+
+		while not HasModelLoaded(modelHash) do
+			Citizen.Wait(1)
+		end
+	end
+
+	-- At this moment the model its loaded, so now we can create the object
+	obj = CreateObject(modelHash, Config.ServiceLocations[indexNumber].coords.xyz, true)
 	table.insert(targetList, target)
 end
 
@@ -128,6 +148,8 @@ end
 
 updateFunction = function()
 	removeTargets()
+	DeleteObject(obj)
+	obj = nil
 	if existingActions >= 1 then
 		startActions()
 	else
