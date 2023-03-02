@@ -36,12 +36,12 @@ updateService= function(target, actions)
 	end
 end
 
-RegisterServerEvent('JD_CommunityService:completeService')
-AddEventHandler('JD_CommunityService:completeService', function()
+lib.callback.register('JD_CommunityService:completeService', function()
+	print('triggered')
 	local _source = source -- cannot parse source to client trigger for some weird reason
 	local xPlayer = ESX.GetPlayerFromId(_source)
 	local identifier = xPlayer.identifier
-	local delete = MySQL.query.await('DELETE FROM communityservice WHERE identifier = ?', {identifier})
+	MySQL.query.await('DELETE FROM communityservice WHERE identifier = ?', {identifier})
 end)
 
 lib.callback.register('JD_CommunityService:getCurrentActions', function()
@@ -66,8 +66,7 @@ RegisterCommand('communityService', function(source, args, rawCommand)
 	end
 end,false)
 
-RegisterServerEvent('JD_CommunityService:communityMenu')
-AddEventHandler('JD_CommunityService:communityMenu', function()
+lib.callback.register('JD_CommunityService:communityMenu', function()
 	local _source = source -- cannot parse source to client trigger for some weird reason
 	local xPlayer = ESX.GetPlayerFromId(_source)
 
