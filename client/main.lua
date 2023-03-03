@@ -31,7 +31,7 @@ end
 
 Citizen.CreateThread(function()
   	while true do
-		Wait(0)
+		Citizen.Wait(1)
 		if drawMarker then 
 			DrawMarker(20, markerData.x, markerData.y, markerData.z + 1.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.4, 0.4, 0.4, 235, 64, 52, 100, true, false, 2, true, false, false, false)
 		else 
@@ -99,7 +99,7 @@ startActions = function()
 			}
 		})
 		table.insert(targetList, target)
-	elseif Config.InteractionType == 'points' then	
+	elseif Config.InteractionType == 'points' then
 		local point = lib.points.new(Config.ServiceLocations[indexNumber].coords.xyz, 2, {})
 		function point:onExit()
 			lib.hideTextUI()
