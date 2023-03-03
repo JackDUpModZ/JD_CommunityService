@@ -1,5 +1,7 @@
 Config = {}
 
+Config.Framework = 'esx' -- qbcore | esx
+
 Config.InteractionType = 'points' -- Either ox_target or points (Qtarget maybe soon?)
 
 -- # By how many services a player's community service gets extended if he tries to escape
