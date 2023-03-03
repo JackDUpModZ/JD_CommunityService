@@ -6,14 +6,28 @@ local drawMarker = false
 local markerData = nil
 local obj
 
-RegisterNetEvent('esx:playerLoaded')
-AddEventHandler('esx:playerLoaded', function(playerData)
-	Citizen.Wait(2000)
-	local count = lib.callback.await('JD_CommunityService:getCurrentActions', false)
-	if count ~= nil then
-		beginService(count)
-	end
-end)
+if Config.Framework == 'qbcore' then
+	QBCore = GetResourceState('qb-core') == 'started' and exports['qb-core']:GetCoreObject()
+
+	RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
+	AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+		Citizen.Wait(2000)
+		local count = lib.callback.await('JD_CommunityService:getCurrentActions', false)
+		if count ~= nil then
+			beginService(count)
+		end
+	end)
+elseif Config.Framework == 'esx' then
+	ESX = GetResourceState('es_extended') == 'started' and exports.es_extended:getSharedObject()
+	RegisterNetEvent('esx:playerLoaded')
+	AddEventHandler('esx:playerLoaded', function(playerData)
+		Citizen.Wait(2000)
+		local count = lib.callback.await('JD_CommunityService:getCurrentActions', false)
+		if count ~= nil then
+			beginService(count)
+		end
+	end)
+end
 
 Citizen.CreateThread(function()
   	while true do
@@ -32,7 +46,7 @@ function onExit(self)
 			local currentNumber = existingActions
 			local extensionCount = Config.ServiceExtensionOnEscape
 			existingActions = currentNumber + extensionCount
-			ESX.ShowNotification('Youre time has been extended by '..extensionCount..' actions!')
+			ShowNotification('Youre time has been extended by '..extensionCount..' actions!')
 		end
 		tpToZone()
 	end
@@ -152,7 +166,7 @@ startSweep = function()
 
 	existingActions = existingActions - 1
 	if existingActions >= 1 then
-		ESX.ShowNotification('Actions remaining'..' '.. existingActions ..'!')
+		ShowNotification('Actions remaining'..' '.. existingActions ..'!')
 	end
 	updateFunction()
 end
@@ -168,7 +182,7 @@ updateFunction = function()
 		inService = false
 		releaseZone()
 		lib.callback('JD_CommunityService:completeService')
-		ESX.ShowNotification('Youve been released from community service, Best behaviour citizen!')
+		ShowNotification('Youve been released from community service, Best behaviour citizen!')
 	end
 end
 
@@ -199,3 +213,11 @@ lib.callback.register('JD_CommunityService:inputCallback', function()
 	if not input then return end
     return input
 end)
+
+ShowNotification = function(msg)
+	if Config.Framework == 'qbcore' then
+		QBCore.Functions.Notify(msg, 'success', 5000)
+	elseif Config.Framework == 'esx' then
+		ESX.ShowNotification(msg)
+	end
+end
