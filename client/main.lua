@@ -31,7 +31,7 @@ end
 
 Citizen.CreateThread(function()
   	while true do
-		Citizen.Wait(1)
+		Wait(0)
 		if drawMarker then 
 			DrawMarker(20, markerData.x, markerData.y, markerData.z + 1.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.4, 0.4, 0.4, 235, 64, 52, 100, true, false, 2, true, false, false, false)
 		else 
