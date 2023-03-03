@@ -1,5 +1,7 @@
 Config = {}
 
+Config.InteractionType = 'points' -- Either ox_target or points (Qtarget maybe soon?)
+
 -- # By how many services a player's community service gets extended if he tries to escape
 Config.ServiceExtensionOnEscape = 2
 
