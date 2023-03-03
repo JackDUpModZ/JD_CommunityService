@@ -2,7 +2,6 @@ local active = nil
 local inService = false
 local existingActions
 local targetList = {}
-local pointList = {}
 local drawMarker = false
 local markerData = nil
 local obj
@@ -92,9 +91,9 @@ startActions = function()
 		function point:nearby()
 			if IsControlJustReleased(0, 38) then
 				startSweep()
+				point:remove()
 			end
 		end
-		table.insert(pointList, point)
 	end
 	local modelHash = `v_ind_rc_rubbishppr` -- The ` return the jenkins hash of a string. see more at: https://cookbook.fivem.net/2019/06/23/lua-support-for-compile-time-jenkins-hashes/
 
@@ -121,12 +120,7 @@ releaseZone = function()
 end
 
 removeInteracts = function()
-	if Config.InteractionType == 'points' then
-		for k,v in pairs(pointList) do 
-			point:remove()
-			pointList[k] = nil
-		end
-	elseif Config.InteractionType == 'ox_target' then
+	if Config.InteractionType == 'ox_target' then
 		for k,v in pairs(targetList) do 
 			exports.ox_target:removeZone(v)
 			targetList[k] = nil
