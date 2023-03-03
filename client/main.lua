@@ -10,8 +10,7 @@ RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(playerData)
 	Citizen.Wait(2000)
 	local count = lib.callback.await('JD_CommunityService:getCurrentActions', false)
-	if count == nil then
-	elseif count >= 1 then
+	if count ~= nil then
 		beginService(count)
 	end
 end)
@@ -138,10 +137,9 @@ startSweep = function()
 		disable = { move = true, combat = true }
 	})
 
-	local currentNumber = existingActions
-	existingActions = currentNumber -1
+	existingActions = existingActions - 1
 	if existingActions >= 1 then
-		ESX.ShowNotification('Actions remaining'..' '..existingActions..'!')
+		ESX.ShowNotification('Actions remaining'..' '.. existingActions ..'!')
 	end
 	updateFunction()
 end
