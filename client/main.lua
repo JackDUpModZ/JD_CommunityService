@@ -99,10 +99,13 @@ startActions = function()
 			}
 		})
 		table.insert(targetList, target)
-	elseif Config.InteractionType == 'points' then
+	elseif Config.InteractionType == 'points' then	
 		local point = lib.points.new(Config.ServiceLocations[indexNumber].coords.xyz, 2, {})
-			
+		function point:onExit()
+			lib.hideTextUI()
+		end
 		function point:nearby()
+			lib.showTextUI('[E] - Sweep rubbish')
 			if IsControlJustReleased(0, 38) then
 				startSweep()
 				point:remove()
