@@ -121,7 +121,7 @@ releaseZone = function()
 end
 
 removeInteracts = function()
-	if Config.InteractionType == 'points'
+	if Config.InteractionType == 'points' then
 		for k,v in pairs(pointList) do 
 			point:remove()
 			pointList[k] = nil
