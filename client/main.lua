@@ -2,6 +2,7 @@ local active = nil
 local inService = false
 local existingActions
 local targetList = {}
+local pointList = {}
 local drawMarker = false
 local markerData = nil
 local obj
@@ -68,21 +69,33 @@ startActions = function()
 
 	drawMarker = true
 	markerData = Config.ServiceLocations[indexNumber].coords.xyz
-	local target = exports.ox_target:addSphereZone({
-		coords = Config.ServiceLocations[indexNumber].coords.xyz,
-		radius = 1,
-		options = {
-			{
-				name = 'sweep',
-				onSelect = targetInteract,
-				icon = 'fa-solid fa-location-crosshairs',
-				label = 'Sweep',
-				canInteract = function(entity, distance, coords, name)
-					return not lib.progressActive()
-				end
+	if Config.InteractionType == 'ox_target' then
+		local target = exports.ox_target:addSphereZone({
+			coords = Config.ServiceLocations[indexNumber].coords.xyz,
+			radius = 1,
+			options = {
+				{
+					name = 'sweep',
+					onSelect = targetInteract,
+					icon = 'fa-solid fa-location-crosshairs',
+					label = 'Sweep',
+					canInteract = function(entity, distance, coords, name)
+						return not lib.progressActive()
+					end
+				}
 			}
-		}
-	})
+		})
+		table.insert(targetList, target)
+	elseif Config.InteractionType == 'points' then
+		local point = lib.points.new(Config.ServiceLocations[indexNumber].coords.xyz, 2, {})
+			
+		function point:nearby()
+			if IsControlJustReleased(0, 38) then
+				startSweep()
+			end
+		end
+		table.insert(pointList, point)
+	end
 	local modelHash = `v_ind_rc_rubbishppr` -- The ` return the jenkins hash of a string. see more at: https://cookbook.fivem.net/2019/06/23/lua-support-for-compile-time-jenkins-hashes/
 
 	if not HasModelLoaded(modelHash) then
@@ -96,7 +109,6 @@ startActions = function()
 
 	-- At this moment the model its loaded, so now we can create the object
 	obj = CreateObject(modelHash, Config.ServiceLocations[indexNumber].coords.xyz, true)
-	table.insert(targetList, target)
 end
 
 tpToZone = function()
@@ -108,10 +120,17 @@ releaseZone = function()
 	SetEntityCoords(PlayerPedId(), Config.ReleaseLocation.xyz)
 end
 
-removeTargets = function()
-	for k,v in pairs(targetList) do 
-		exports.ox_target:removeZone(v)
-		targetList[k] = nil
+removeInteracts = function()
+	if Config.InteractionType == 'points'
+		for k,v in pairs(pointList) do 
+			point:remove()
+			pointList[k] = nil
+		end
+	elseif Config.InteractionType == 'ox_target' then
+		for k,v in pairs(targetList) do 
+			exports.ox_target:removeZone(v)
+			targetList[k] = nil
+		end
 	end
 	drawMarker = false
 	markerData = nil
@@ -145,7 +164,7 @@ startSweep = function()
 end
 
 updateFunction = function()
-	removeTargets()
+	removeInteracts()
 	DeleteObject(obj)
 	obj = nil
 	if existingActions >= 1 then
