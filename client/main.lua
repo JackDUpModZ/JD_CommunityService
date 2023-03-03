@@ -133,6 +133,7 @@ end
 
 releaseZone = function()
 	returnClothing()
+	lib.hideTextUI()
 	SetEntityCoords(PlayerPedId(), Config.ReleaseLocation.xyz)
 end
 
