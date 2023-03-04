@@ -191,9 +191,7 @@ updateFunction = function()
 end
 
 changeClothing = function()
-	TriggerEvent('skinchanger:getSkin', function(skin)
-		gender = skin.model
-	end)
+	local gender = GetEntityModel(PlayerPedId())
 	local PlayerPed = PlayerPedId()
 	if gender == 'mp_m_freemode_01' then
 		for k,v in pairs(Config.Clothes.male.components) do
