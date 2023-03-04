@@ -62,7 +62,6 @@ updateService= function(target, actions)
 end
 
 lib.callback.register('JD_CommunityService:completeService', function()
-	print('triggered')
 	local _source = source -- cannot parse source to client trigger for some weird reason
 	local Player = GetPlayer(_source)
 	local identifier = Player.identifier
