@@ -1,7 +1,7 @@
 fx_version 'adamant'
 games {'gta5'}
 
-description 'JD Community Service'
+description 'JD Community Service ESX/QB'
 
 version '1.0.0'
 lua54 'yes'

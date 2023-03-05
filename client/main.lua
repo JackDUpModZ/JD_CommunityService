@@ -116,8 +116,7 @@ startActions = function()
 		function point:nearby()
 			lib.showTextUI('[E] - Sweep rubbish')
 			if IsControlJustReleased(0, 38) then
-				startSweep()
-				point:remove()
+				startSweep(point)
 			end
 		end
 	end
@@ -163,7 +162,9 @@ targetInteract = function(data)
 	end
 end
 
-startSweep = function()
+startSweep = function(point)
+	point:remove()
+	lib.hideTextUI()
 	local progress = lib.progressCircle({
 		duration = 5000,
 		label = 'Sweeping ground',
