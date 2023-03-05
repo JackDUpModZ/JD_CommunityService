@@ -69,6 +69,15 @@ AddEventHandler('JD_CommunityService:beginService', function(count)
 	beginService(count)
 end)
 
+RegisterNetEvent('JD_CommunityService:releaseService')
+AddEventHandler('JD_CommunityService:releaseService', function(count)
+	active = false
+	inService = false
+	releaseZone()
+	lib.callback('JD_CommunityService:completeService')
+	ShowNotification('Youve been released from community service, Best behaviour citizen!')
+end)
+
 beginService = function(actionCount)
 	existingActions = actionCount
 	inService = true
@@ -212,6 +221,12 @@ end
 
 lib.callback.register('JD_CommunityService:inputCallback', function()
 	local input = lib.inputDialog('Community Service', {'Player ID', 'Number of actions'})
+	if not input then return end
+    return input
+end)
+
+lib.callback.register('JD_CommunityService:inputCallbackRelease', function()
+	local input = lib.inputDialog('Community Service', {'Player ID'})
 	if not input then return end
     return input
 end)
