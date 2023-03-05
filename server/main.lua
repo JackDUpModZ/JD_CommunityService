@@ -93,6 +93,43 @@ RegisterCommand('communityService', function(source, args, rawCommand)
 	end
 end,false)
 
+RegisterCommand('communityServiceAdmin', function(source, args, rawCommand)
+	local _source = source -- cannot parse source to client trigger for some weird reason
+	local Player = GetPlayer(_source)
+	local input = lib.callback.await('JD_CommunityService:inputCallback', source)
+	if input == nil then
+	else
+		local targetID = tonumber(input[1])
+		local actionCount = input[2]
+		sendToService(targetID, actionCount)
+	end
+end,true)
+
+RegisterCommand('releaseCommunityService', function(source, args, rawCommand)
+	local _source = source -- cannot parse source to client trigger for some weird reason
+	local Player = GetPlayer(_source)
+
+	if Player.job.name == Config.PoliceJob then
+		local input = lib.callback.await('JD_CommunityService:inputCallbackRelease', source)
+		if input == nil then
+		else
+			TriggerClientEvent('JD_CommunityService:releaseService',input[1])
+		end
+	else
+		showNotification(source,'No permissions to access this!')
+	end
+end,true)
+
+RegisterCommand('releaseCommunityServiceAdmin', function(source, args, rawCommand)
+	local _source = source -- cannot parse source to client trigger for some weird reason
+	local Player = GetPlayer(_source)
+	local input = lib.callback.await('JD_CommunityService:inputCallbackRelease', source)
+	if input == nil then
+	else
+		TriggerClientEvent('JD_CommunityService:releaseService',input[1])
+	end
+end,true)
+
 lib.callback.register('JD_CommunityService:communityMenu', function()
 	local _source = source -- cannot parse source to client trigger for some weird reason
 	local Player = GetPlayer(_source)
