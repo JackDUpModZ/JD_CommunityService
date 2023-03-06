@@ -4,7 +4,7 @@ Config.Framework = 'esx' -- qbcore | esx
 
 Config.InteractionType = 'points' -- Either ox_target or points (Qtarget maybe soon?)
 
-Config.EnableWebhook = true
+Config.EnableWebhook = false
 
 Config.Webhook = ''
 

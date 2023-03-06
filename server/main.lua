@@ -50,8 +50,8 @@ sendToService = function(target, actions)
 			showNotification(target,'Youve been sent to community service for '..actions..' actions!')
 			TriggerClientEvent('JD_CommunityService:beginService',target,actions)
 			updateService(target,actions)
-			local name = getPlayerName(targetPlayer)
 			if Config.EnableWebhook then
+				local name = getPlayerName(targetPlayer)
 				sendToDiscord(16753920, "Community Service Alert", name.." was sent to community service for "..actions.." months!", "Made by JackDUpModZ")		
 			end
 		end
@@ -95,6 +95,7 @@ RegisterCommand('communityService', function(source, args, rawCommand)
 	if Player.job.name == Config.PoliceJob then
 		local input = lib.callback.await('JD_CommunityService:inputCallback', source)
 		if input == nil then
+			Player.showNotification('Invalid Data Received!')
 		else
 		local targetID = tonumber(input[1])
 		local actionCount = input[2]
@@ -106,10 +107,12 @@ RegisterCommand('communityService', function(source, args, rawCommand)
 end,false)
 
 RegisterCommand('communityServiceAdmin', function(source, args, rawCommand)
+	print(source, args, rawCommand)
 	local _source = source -- cannot parse source to client trigger for some weird reason
 	local Player = GetPlayer(_source)
 	local input = lib.callback.await('JD_CommunityService:inputCallback', source)
 	if input == nil then
+		Player.showNotification('Invalid Data Received!')
 	else
 		local targetID = tonumber(input[1])
 		local actionCount = input[2]
@@ -124,12 +127,13 @@ RegisterCommand('releaseCommunityService', function(source, args, rawCommand)
 	if Player.job.name == Config.PoliceJob then
 		local input = lib.callback.await('JD_CommunityService:inputCallbackRelease', source)
 		if input == nil then
+			Player.showNotification('Invalid Data Received!')
 		else
-			local realeased = GetPlayer(input[1])
-			local realeaser = GetPlayer(_source)
-			local name = getPlayerName(realeased)
-			local name2 = getPlayerName(realeaser)
 			if Config.EnableWebhook then
+				local realeased = GetPlayer(input[1])
+				local realeaser = GetPlayer(_source)
+				local name = getPlayerName(realeased)
+				local name2 = getPlayerName(realeaser)
 				sendToDiscord(16753920, "Community Service Alert", name.." was released from community service by "..name2, "Made by JackDUpModZ")		
 			end
 			TriggerClientEvent('JD_CommunityService:releaseService',input[1])
@@ -143,13 +147,15 @@ RegisterCommand('releaseCommunityServiceAdmin', function(source, args, rawComman
 	local _source = source -- cannot parse source to client trigger for some weird reason
 	local Player = GetPlayer(_source)
 	local input = lib.callback.await('JD_CommunityService:inputCallbackRelease', source)
+	print(input)
 	if input == nil then
+		Player.showNotification('Invalid Data Received!')
 	else
-		local realeased = GetPlayer(input[1])
-		local realeaser = GetPlayer(_source)
-		local name = getPlayerName(realeased)
-		local name2 = getPlayerName(realeaser)
 		if Config.EnableWebhook then
+			local realeased = GetPlayer(input[1])
+			local realeaser = GetPlayer(_source)
+			local name = getPlayerName(realeased)
+			local name2 = getPlayerName(realeaser)
 			sendToDiscord(16753920, "Community Service Alert", name.." was released from community service by "..name2, "Made by JackDUpModZ")		
 		end
 		TriggerClientEvent('JD_CommunityService:releaseService',input[1])
@@ -163,6 +169,7 @@ lib.callback.register('JD_CommunityService:communityMenu', function()
 	if Player.job.name == Config.PoliceJob then
 		local input = lib.callback.await('JD_CommunityService:inputCallback', source)
 		if input == nil then
+			Player.showNotification('Invalid Data Received!')
 		else
 		local targetID = tonumber(input[1])
 		local actionCount = input[2]

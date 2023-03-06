@@ -222,14 +222,30 @@ end
 
 lib.callback.register('JD_CommunityService:inputCallback', function()
 	local input = lib.inputDialog('Community Service', {'Player ID', 'Number of actions'})
-	if not input then return end
-    return input
+	local data
+	if input[1] == '' then
+		data =  nil
+	else
+		if input[2] == '' then
+			data =  nil
+		else
+			data = input
+		end
+	end
+
+	return data
 end)
 
 lib.callback.register('JD_CommunityService:inputCallbackRelease', function()
-	local input = lib.inputDialog('Community Service', {'Player ID'})
-	if not input then return end
-    return input
+	local input = lib.inputDialog('Community Service', {'Player ID'},{allowCancel = false})
+	local data
+	if input[1] == '' then
+		data =  nil
+	else
+		data = input
+	end
+
+	return data
 end)
 
 ShowNotification = function(msg)
