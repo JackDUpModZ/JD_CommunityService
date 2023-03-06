@@ -32,9 +32,12 @@ end
 
 CreateThread(function()
 	while true do
-		Wait(0)
-		if not drawMarker then Wait(1500) end
-		DrawMarker(20, markerData.x, markerData.y, markerData.z + 1.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.4, 0.4, 0.4, 235, 64, 52, 100, true, false, 2, true, false, false, false)
+		local threadSleep = 1500
+		if drawMarker then
+			threadSleep = 0
+			DrawMarker(20, markerData.x, markerData.y, markerData.z + 1.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.4, 0.4, 0.4, 235, 64, 52, 100, true, false, 2, true, false, false, false)
+		end
+		Wait(threadSleep)
 	end
 end)
 
