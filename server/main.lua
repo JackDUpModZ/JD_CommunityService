@@ -94,30 +94,21 @@ RegisterCommand('communityService', function(source, args, rawCommand)
 
 	if Player.job.name == Config.PoliceJob then
 		local input = lib.callback.await('JD_CommunityService:inputCallback', source)
-		if input == nil then
-			Player.showNotification('Invalid Data Received!')
-		else
 		local targetID = tonumber(input[1])
 		local actionCount = input[2]
 		sendToService(targetID, actionCount)
-		end
 	else
 		showNotification(source,'No permissions to access this!')
 	end
 end,false)
 
 RegisterCommand('communityServiceAdmin', function(source, args, rawCommand)
-	print(source, args, rawCommand)
 	local _source = source -- cannot parse source to client trigger for some weird reason
 	local Player = GetPlayer(_source)
 	local input = lib.callback.await('JD_CommunityService:inputCallback', source)
-	if input == nil then
-		Player.showNotification('Invalid Data Received!')
-	else
-		local targetID = tonumber(input[1])
-		local actionCount = input[2]
-		sendToService(targetID, actionCount)
-	end
+	local targetID = tonumber(input[1])
+	local actionCount = input[2]
+	sendToService(targetID, actionCount)
 end,true)
 
 RegisterCommand('releaseCommunityService', function(source, args, rawCommand)
@@ -126,18 +117,14 @@ RegisterCommand('releaseCommunityService', function(source, args, rawCommand)
 
 	if Player.job.name == Config.PoliceJob then
 		local input = lib.callback.await('JD_CommunityService:inputCallbackRelease', source)
-		if input == nil then
-			Player.showNotification('Invalid Data Received!')
-		else
-			if Config.EnableWebhook then
-				local realeased = GetPlayer(input[1])
-				local realeaser = GetPlayer(_source)
-				local name = getPlayerName(realeased)
-				local name2 = getPlayerName(realeaser)
-				sendToDiscord(16753920, "Community Service Alert", name.." was released from community service by "..name2, "Made by JackDUpModZ")		
-			end
-			TriggerClientEvent('JD_CommunityService:releaseService',input[1])
+		if Config.EnableWebhook then
+			local realeased = GetPlayer(input[1])
+			local realeaser = GetPlayer(_source)
+			local name = getPlayerName(realeased)
+			local name2 = getPlayerName(realeaser)
+			sendToDiscord(16753920, "Community Service Alert", name.." was released from community service by "..name2, "Made by JackDUpModZ")		
 		end
+		TriggerClientEvent('JD_CommunityService:releaseService',input[1])
 	else
 		showNotification(source,'No permissions to access this!')
 	end
@@ -147,19 +134,14 @@ RegisterCommand('releaseCommunityServiceAdmin', function(source, args, rawComman
 	local _source = source -- cannot parse source to client trigger for some weird reason
 	local Player = GetPlayer(_source)
 	local input = lib.callback.await('JD_CommunityService:inputCallbackRelease', source)
-	print(input)
-	if input == nil then
-		Player.showNotification('Invalid Data Received!')
-	else
-		if Config.EnableWebhook then
-			local realeased = GetPlayer(input[1])
-			local realeaser = GetPlayer(_source)
-			local name = getPlayerName(realeased)
-			local name2 = getPlayerName(realeaser)
-			sendToDiscord(16753920, "Community Service Alert", name.." was released from community service by "..name2, "Made by JackDUpModZ")		
-		end
-		TriggerClientEvent('JD_CommunityService:releaseService',input[1])
+	if Config.EnableWebhook then
+		local realeased = GetPlayer(input[1])
+		local realeaser = GetPlayer(_source)
+		local name = getPlayerName(realeased)
+		local name2 = getPlayerName(realeaser)
+		sendToDiscord(16753920, "Community Service Alert", name.." was released from community service by "..name2, "Made by JackDUpModZ")		
 	end
+	TriggerClientEvent('JD_CommunityService:releaseService',input[1])
 end,true)
 
 lib.callback.register('JD_CommunityService:communityMenu', function()
@@ -168,13 +150,9 @@ lib.callback.register('JD_CommunityService:communityMenu', function()
 
 	if Player.job.name == Config.PoliceJob then
 		local input = lib.callback.await('JD_CommunityService:inputCallback', source)
-		if input == nil then
-			Player.showNotification('Invalid Data Received!')
-		else
 		local targetID = tonumber(input[1])
 		local actionCount = input[2]
 		sendToService(targetID, actionCount)
-		end
 	else
 		showNotification(source,'No permissions to access this!')
 	end
