@@ -2,6 +2,8 @@ Config = {}
 
 Config.Framework = 'esx' -- qbcore | esx
 
+Config.checkForUpdates = true
+
 Config.InteractionType = 'points' -- Either ox_target or points (Qtarget maybe soon?)
 
 Config.EnableWebhook = false

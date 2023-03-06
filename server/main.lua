@@ -4,6 +4,10 @@
 -- for k,v in pairs(actionsTable) do
 -- 	print(k,v)
 -- end
+
+local curVersion = GetResourceMetadata(GetCurrentResourceName(), "version")
+local resourceName = "JD_CommunityService"
+
 if Config.Framework == 'qbcore' then
 	QBCore = exports['qb-core']:GetCoreObject()
 	function GetPlayer(source)
@@ -158,21 +162,72 @@ lib.callback.register('JD_CommunityService:communityMenu', function()
 	end
 end)
 
-Citizen.CreateThread(function()
-
-end)
-
 function sendToDiscord(color, name, message, footer)
 	local embed = {
-		  {
-			  ["color"] = color,
-			  ["title"] = "**".. name .."**",
-			  ["description"] = message,
-			  ["footer"] = {
-				  ["text"] = footer,
-			  },
-		  }
-	  }
-  
+		{
+			["color"] = color,
+			["title"] = "**".. name .."**",
+			["description"] = message,
+			["footer"] = {
+				["text"] = footer,
+			},
+		}
+	}
+
 	PerformHttpRequest(Config.Webhook, function(err, text, headers) end, 'POST', json.encode({username = name, embeds = embed}), { ['Content-Type'] = 'application/json' })
-  end
+end
+
+if Config.checkForUpdates then
+    CreateThread(function()
+        if GetCurrentResourceName() ~= "JD_CommunityService" then
+            resourceName = "JD_CommunityService (" .. GetCurrentResourceName() .. ")"
+        end
+    end)
+
+    CreateThread(function()
+        while true do
+            PerformHttpRequest("https://api.github.com/repos/JackDUpModZ/JD_CommunityService/releases/latest", CheckVersion, "GET")
+            Wait(3600000)
+        end
+    end)
+
+    CheckVersion = function(err, responseText, headers)
+        local repoVersion, repoURL, repoBody = GetRepoInformations()
+
+        CreateThread(function()
+            if curVersion ~= repoVersion then
+                Wait(4000)
+                print("^0[^3WARNING^0] " .. resourceName .. " is ^1NOT ^0up to date!")
+                print("^0[^3WARNING^0] Your Version: ^2" .. curVersion .. "^0")
+                print("^0[^3WARNING^0] Latest Version: ^2" .. repoVersion .. "^0")
+                print("^0[^3WARNING^0] Get the latest Version from: ^2" .. repoURL .. "^0")
+            else
+                Wait(4000)
+                print("^0[^2INFO^0] " .. resourceName .. " is up to date! (^2" .. curVersion .. "^0)")
+            end
+        end)
+    end
+
+    GetRepoInformations = function()
+        local repoVersion, repoURL, repoBody = nil, nil, nil
+
+        PerformHttpRequest("https://api.github.com/repos/JackDUpModZ/JD_CommunityService/releases/latest", function(err, response, headers)
+            if err == 200 then
+                local data = json.decode(response)
+
+                repoVersion = data.tag_name
+                repoURL = data.html_url
+                repoBody = data.body
+            else
+                repoVersion = curVersion
+                repoURL = "https://github.com/JackDUpModZ/JD_CommunityService"
+            end
+        end, "GET")
+
+        repeat
+            Wait(50)
+        until (repoVersion and repoURL and repoBody)
+
+        return repoVersion, repoURL, repoBody
+    end
+end
