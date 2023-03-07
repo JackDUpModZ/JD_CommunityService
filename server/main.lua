@@ -43,7 +43,7 @@ end
 sendToService = function(target, actions)
 	local targetPlayer = GetPlayer(target)
 
-	if targetPlayer then
+	if targetPlayer == nil then
 		return showNotification(source, 'Invalid ID / No one sent!')
 	end
 
@@ -105,6 +105,7 @@ end, false)
 
 RegisterCommand('communityServiceAdmin', function(source, args, rawCommand)
 	local input = lib.callback.await('JD_CommunityService:inputCallback', source)
+	print(input[1])
 	local targetID = tonumber(input[1])
 	local actionCount = input[2]
 	sendToService(targetID, actionCount)
@@ -116,6 +117,12 @@ RegisterCommand('releaseCommunityService', function(source, args, rawCommand)
 
 	if Player.job.name ~= Config.PoliceJob then
 		return showNotification(source, 'No permissions to access this!')
+	end
+
+	local targetPlayer = GetPlayer(input[1])
+
+	if targetPlayer == nil then
+		return showNotification(source, 'Invalid ID / No one sent!')
 	end
 
 	local input = lib.callback.await('JD_CommunityService:inputCallbackRelease', source)
@@ -133,6 +140,12 @@ end, true)
 RegisterCommand('releaseCommunityServiceAdmin', function(source, args, rawCommand)
 	local _source = source -- cannot parse source to client trigger for some weird reason
 	local input = lib.callback.await('JD_CommunityService:inputCallbackRelease', source)
+	local targetPlayer = GetPlayer(input[1])
+
+	if targetPlayer == nil then
+		return showNotification(source, 'Invalid ID / No one sent!')
+	end
+
 	TriggerClientEvent('JD_CommunityService:releaseService', input[1])
 	if Config.EnableWebhook then
 		local realeased = GetPlayer(input[1])
