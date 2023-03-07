@@ -1,52 +1,53 @@
-local active = nil
-local inService = false
-local existingActions
-local targetList = {}
-local drawMarker = false
-local markerData = nil
-local obj
+local inService, targetList, drawMarker, markerData, obj, existingActions = false, {}, false, nil, nil, nil
 
 if Config.Framework == 'qbcore' then
 	QBCore = GetResourceState('qb-core') == 'started' and exports['qb-core']:GetCoreObject()
 
 	RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
 	AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
-		Citizen.Wait(2000)
+		Wait(2000)
 		local count = lib.callback.await('JD_CommunityService:getCurrentActions', false)
-		if count ~= nil then
-			beginService(count)
-		end
+		if count == nil then return print("JD_CommunityService | Something went wrong!") end
+		beginService(count)
 	end)
+
+	ShowNotification = function(msg)
+		QBCore.Functions.Notify(msg, 'success', 5000)
+	end
 elseif Config.Framework == 'esx' then
 	ESX = GetResourceState('es_extended') == 'started' and exports.es_extended:getSharedObject()
+
 	RegisterNetEvent('esx:playerLoaded')
-	AddEventHandler('esx:playerLoaded', function(playerData)
-		Citizen.Wait(2000)
+	AddEventHandler('esx:playerLoaded', function()
+		Wait(2000)
 		local count = lib.callback.await('JD_CommunityService:getCurrentActions', false)
-		if count ~= nil then
-			beginService(count)
-		end
+		if count == nil then return print("JD_CommunityService | Something went wrong!") end
+		beginService(count)
 	end)
+
+	ShowNotification = function(msg)
+		ESX.ShowNotification(msg)
+	end
 end
 
-Citizen.CreateThread(function()
-  	while true do
-		Citizen.Wait(1)
-		if drawMarker then 
+CreateThread(function()
+	while true do
+		local threadSleep = 1500
+		if drawMarker then
+			threadSleep = 0
 			DrawMarker(20, markerData.x, markerData.y, markerData.z + 1.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.4, 0.4, 0.4, 235, 64, 52, 100, true, false, 2, true, false, false, false)
-		else 
-			Wait(500)
 		end
+		Wait(threadSleep)
 	end
 end)
 
 function onExit(self)
-    if inService then
+	if inService then
 		if Config.ServiceExtensionOnEscape >= 1 then
 			local currentNumber = existingActions
 			local extensionCount = Config.ServiceExtensionOnEscape
 			existingActions = currentNumber + extensionCount
-			ShowNotification('Youre time has been extended by '..extensionCount..' actions!')
+			ShowNotification('Your time has been extended by ' .. extensionCount .. ' actions!')
 		end
 		tpToZone()
 	end
@@ -60,8 +61,8 @@ local poly = lib.zones.poly({
 		vec3(180.0, -831.0, 29.0),
 	},
 	thickness = 16.0,
-    debug = false,
-    onExit = onExit
+	debug = false,
+	onExit = onExit
 })
 
 RegisterNetEvent('JD_CommunityService:beginService')
@@ -71,11 +72,10 @@ end)
 
 RegisterNetEvent('JD_CommunityService:releaseService')
 AddEventHandler('JD_CommunityService:releaseService', function(count)
-	active = false
 	inService = false
 	releaseZone()
 	lib.callback('JD_CommunityService:completeService')
-	ShowNotification('Youve been released from community service, Best behaviour citizen!')
+	ShowNotification('You have been released from community service. Best behaviour, citizen!')
 end)
 
 beginService = function(actionCount)
@@ -87,7 +87,7 @@ beginService = function(actionCount)
 end
 
 startActions = function()
-	local indexNumber = math.random(1,#Config.ServiceLocations)
+	local indexNumber = math.random(1, #Config.ServiceLocations)
 
 	drawMarker = true
 	markerData = Config.ServiceLocations[indexNumber].coords.xyz
@@ -113,6 +113,7 @@ startActions = function()
 		function point:onExit()
 			lib.hideTextUI()
 		end
+
 		function point:nearby()
 			lib.showTextUI('[E] - Sweep rubbish')
 			if IsControlJustReleased(0, 38) then
@@ -120,6 +121,7 @@ startActions = function()
 			end
 		end
 	end
+
 	local modelHash = `v_ind_rc_rubbishppr` -- The ` return the jenkins hash of a string. see more at: https://cookbook.fivem.net/2019/06/23/lua-support-for-compile-time-jenkins-hashes/
 
 	if not HasModelLoaded(modelHash) then
@@ -127,7 +129,7 @@ startActions = function()
 		RequestModel(modelHash)
 
 		while not HasModelLoaded(modelHash) do
-			Citizen.Wait(1)
+			Wait(1)
 		end
 	end
 
@@ -147,7 +149,7 @@ end
 
 removeInteracts = function()
 	if Config.InteractionType == 'ox_target' then
-		for k,v in pairs(targetList) do 
+		for k, v in pairs(targetList) do
 			exports.ox_target:removeZone(v)
 			targetList[k] = nil
 		end
@@ -174,13 +176,13 @@ startSweep = function(point)
 		allowFalling = false,
 		canCancel = false,
 		anim = { dict = 'amb@world_human_janitor@male@idle_a', clip = 'idle_a' },
-		prop = { model = `prop_tool_broom`, bone = 28422, pos = { x = -0.005, y = 0.0, z = 0.0}, rot = { x = 360.0, y = 360.0, z = 0.0 } },
+		prop = { model = `prop_tool_broom`, bone = 28422, pos = { x = -0.005, y = 0.0, z = 0.0 }, rot = { x = 360.0, y = 360.0, z = 0.0 } },
 		disable = { move = true, combat = true }
 	})
 
 	existingActions = existingActions - 1
 	if existingActions >= 1 then
-		ShowNotification('Actions remaining'..' '.. existingActions ..'!')
+		ShowNotification('Actions remaining: ' .. existingActions)
 	end
 	updateFunction()
 end
@@ -192,11 +194,10 @@ updateFunction = function()
 	if existingActions >= 1 then
 		startActions()
 	else
-		active = false
 		inService = false
 		releaseZone()
 		lib.callback('JD_CommunityService:completeService')
-		ShowNotification('Youve been released from community service, Best behaviour citizen!')
+		ShowNotification('You have been released from community service. Best behaviour, citizen!')
 	end
 end
 
@@ -204,12 +205,12 @@ changeClothing = function()
 	local gender = GetEntityModel(PlayerPedId())
 	local PlayerPed = PlayerPedId()
 	if gender == 'mp_m_freemode_01' then
-		for k,v in pairs(Config.Clothes.male.components) do
-			SetPedComponentVariation(PlayerPed, v["component_id"], v["drawable"], v["texture"], 0)
+		for k, v in pairs(Config.Clothes.male.components) do
+			SetPedComponentVariation(PlayerPed, v['component_id'], v['drawable'], v['texture'], 0)
 		end
 	else
-		for k,v in pairs(Config.Clothes.female.components) do
-			SetPedComponentVariation(PlayerPed, v["component_id"], v["drawable"], v["texture"], 0)
+		for k, v in pairs(Config.Clothes.female.components) do
+			SetPedComponentVariation(PlayerPed, v['component_id'], v['drawable'], v['texture'], 0)
 		end
 	end
 end
@@ -221,19 +222,16 @@ returnClothing = function()
 end
 
 lib.callback.register('JD_CommunityService:inputCallback', function()
-	local input = lib.inputDialog('Community Service', {{type = 'input', label = 'Citizen ID', description = 'Citizen ID of the person to be released',required = true},{type = 'input', label = 'Number of actions', description = 'Number of actions citizen will need to carry out',required = true}},{allowCancel = false})
+	local input = lib.inputDialog('Community Service', {
+		{ type = 'input', label = 'Citizen ID', description = 'Citizen ID of the person to be released', required = true },
+		{ type = 'input', label = 'Number of actions', description = 'Number of actions citizen will need to carry out', required = true }
+	}, { allowCancel = false })
 	return input
 end)
 
 lib.callback.register('JD_CommunityService:inputCallbackRelease', function()
-	local input = lib.inputDialog('Community Service', {{type = 'input', label = 'Citizen ID', description = 'Citizen ID of the person to be released',required = true}},{allowCancel = false})
+	local input = lib.inputDialog('Community Service', {
+		{ type = 'input', label = 'Citizen ID', description = 'Citizen ID of the person to be released', required = true } 
+	}, { allowCancel = false })
 	return input
 end)
-
-ShowNotification = function(msg)
-	if Config.Framework == 'qbcore' then
-		QBCore.Functions.Notify(msg, 'success', 5000)
-	elseif Config.Framework == 'esx' then
-		ESX.ShowNotification(msg)
-	end
-end
