@@ -165,7 +165,9 @@ targetInteract = function(data)
 end
 
 startSweep = function(point)
-	point:remove()
+	if Config.InteractionType == 'points' then
+		point:remove()
+	end
 	lib.hideTextUI()
 	local progress = lib.progressCircle({
 		duration = 5000,
